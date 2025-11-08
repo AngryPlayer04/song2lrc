@@ -1,0 +1,29 @@
+[project]
+name = "song2lrc"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "AngryPlayer04",email = "cassio@cassionhieg.live"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "customtkinter (>=5.2.2,<6.0.0)",
+    "musicxmatch-api (>=1.0.7,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [
+    { include = "lyricsfetcher", from = "src" },
+    { include = "ui", from = "src" }
+    ]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[dependency-groups]
+dev = [
+    "pyinstaller (>=6.16.0,<7.0.0)"
+]
