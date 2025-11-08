@@ -1,0 +1,59 @@
+name: Build Executables
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['windows-latest', 'ubuntu-latest']
+
+    env:
+      # Caminho CORRIGIDO: Relativo à raiz do repositório
+      MAIN_PY_FILE: 'src/ui/ui.py' 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12.x
+
+    - name: Install Poetry
+      run: |
+        pip install poetry
+
+    - name: Install Python dependencies (Poetry)
+      run: |
+        poetry install --no-root
+      working-directory: ./
+
+    - name: Build executable
+
+      run: |
+        poetry run pyinstaller --onefile ${{ env.MAIN_PY_FILE }}
+      working-directory: ./
+
+    - name: Create Artifact (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-executables
+        path: dist/
+
+    - name: Create Artifact (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-executables
+        path: dist/
+
+    - name: List files in dist folder
+      run: ls -R ./dist/
