@@ -78,4 +78,4 @@ jobs:
           - Windows Executable (song2lrc.exe)
           - Linux Executable (song2lrc)
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
