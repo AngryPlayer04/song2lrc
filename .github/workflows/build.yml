@@ -1,9 +1,9 @@
-name: Build Executables
+name: Build and Release Executables
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -14,7 +14,6 @@ jobs:
         os: ['windows-latest', 'ubuntu-latest']
 
     env:
-      # Caminho CORRIGIDO: Relativo à raiz do repositório
       MAIN_PY_FILE: 'src/ui/ui.py' 
 
     steps:
@@ -36,9 +35,8 @@ jobs:
       working-directory: ./
 
     - name: Build executable
-
       run: |
-        poetry run pyinstaller --onefile ${{ env.MAIN_PY_FILE }}
+        poetry run pyinstaller --onefile ${{ env.MAIN_PY_FILE }} --name song2lrc
       working-directory: ./
 
     - name: Create Artifact (Windows)
@@ -47,13 +45,37 @@ jobs:
       with:
         name: windows-executables
         path: dist/
-
+        retention-days: 1 
+        
     - name: Create Artifact (Linux)
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
         name: linux-executables
         path: dist/
+        retention-days: 1 
 
-    - name: List files in dist folder
-      run: ls -R ./dist/
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download all executables (Artifacts)
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Create and Upload to GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/**/*
+        name: Release ${{ github.ref_name }}
+        body: |
+          Assets for version ${{ github.ref_name }} are attached below:
+          - Windows Executable (song2lrc.exe)
+          - Linux Executable (song2lrc)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
