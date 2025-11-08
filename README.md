@@ -14,7 +14,7 @@
 
 ## Option 1:
 
-Download the executable from the releases tab or by clicking [here](github.com/).
+Download the executable from the releases tab or by clicking [here](https://github.com/AngryPlayer04/song2lrc/releases).
 
 ## Option 2:
 
